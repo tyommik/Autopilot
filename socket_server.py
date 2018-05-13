@@ -1,5 +1,6 @@
 import socket
-import sock_config
+
+#
 
 import RPi.GPIO as GPIO
 import time
@@ -91,7 +92,7 @@ class CarControl():
     def wheel(self, angle):
         self.servo.update(angle)
     def engine(self, angle):
-        self.eng.update(angle)
+        self.eng.update(-angle)
 
 def _read(conn):
     data = b''
@@ -104,7 +105,7 @@ def _read(conn):
 
 if __name__ == "__main__":
     with socket.socket() as sock:
-        sock.bind(("", 10002))
+        sock.bind(("", 10003))
         sock.listen(socket.SOMAXCONN)
 
         while True:
@@ -132,6 +133,8 @@ if __name__ == "__main__":
                         elif data.decode('utf-8').startswith('E'):
                             _, angle = data.decode('utf-8').split(' ')
                             car.engine(float(angle))
+                        else:
+                            print('Wrong command')
                     except ValueError:
                         pass
 
